@@ -1,7 +1,11 @@
 #include <iostream>
+#include "creatures/Creature.h"
 
 int main()
 {
-    std::cout << "..zzzz.....hi, hello" << std::endl;
+    Creature c1(100, 20);
+    c1.printStats();
+
+    std::cout << "Hello, Heroes!" << std::endl;
     return 0;
 }
