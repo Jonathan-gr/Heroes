@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 class Creature
 {
@@ -8,5 +9,6 @@ protected:
 
 public:
     Creature(int h, int a);
-    void printStats();
+    virtual void attack() = 0; // pure virtual function → makes Creature abstract
+    virtual ~Creature();       // virtual destructor
 };

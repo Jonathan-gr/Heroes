@@ -1,11 +1,11 @@
 #include <iostream>
-#include "creatures/Creature.h"
+#include "creatures/Knight.h"
 
 int main()
 {
-    Creature c1(100, 20);
-    c1.printStats();
+    Knight *k2 = new Knight(150, 30);
+    k2->attack();
+    delete k2;
 
-    std::cout << "Hello, Heroes!" << std::endl;
     return 0;
 }
