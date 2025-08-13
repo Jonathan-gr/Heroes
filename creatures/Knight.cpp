@@ -1,14 +1,16 @@
 #include "Knight.h"
 #include <iostream>
 
-Knight::Knight(int h, int a) : Creature(h, a) {}
+// Automatically sets the name to "Knight"
+Knight::Knight(int h, int a)
+    : Creature("Knight", h, a) {}
 
 void Knight::attack()
 {
-    std::cout << "Knight attacks with power: " << attackPower << std::endl;
+    std::cout << name << " attacks with power: " << attackPower << std::endl;
 }
 
 Knight::~Knight()
 {
-    std::cout << "Knight destroyed." << std::endl;
+    std::cout << name << " destroyed." << std::endl;
 }
