@@ -2,8 +2,8 @@
 #include <iostream>
 
 // Automatically sets the name to "Knight"
-Knight::Knight(int h, int a)
-    : Creature("Knight", h, a) {}
+Knight::Knight()
+    : Creature("Knight", 5, 15) {}
 
 void Knight::attack()
 {

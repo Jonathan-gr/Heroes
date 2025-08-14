@@ -5,7 +5,7 @@ class Knight : public Creature
 {
 
 public:
-    Knight(int h, int a);
+    Knight();
     void attack() override; // override pure virtual function
     ~Knight() override;
 };

@@ -1,45 +1,56 @@
 #include "Hero.h"
 #include <iostream>
 
-Hero::Hero(const std::string &heroName) : name(heroName), count(0)
+Hero::Hero(const std::string &heroName) : name(heroName), typeCount(0)
 {
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < MAX_CREATURE_TYPES; ++i)
     {
-        Creatures[i] = nullptr;
+        creatureArr[i].creature = nullptr;
+        creatureArr[i].count = 0;
     }
 }
 Hero::~Hero()
 {
-    for (int i = 0; i < count; ++i)
+    for (int i = 0; i < typeCount; ++i)
     {
-        delete Creatures[i];
+        std::cout << "Deleting creature of type: " << creatureArr[i].creature->getName() << std::endl;
+        delete creatureArr[i].creature;
     }
     std::cout << name << " destroyed." << std::endl;
 }
 bool Hero::addCreature(Creature *c)
 {
-    if (count < 5 && c != nullptr)
+    if (typeCount >= MAX_CREATURE_TYPES)
     {
-        Creatures[count] = c;
-        count++;
-        std::cout << "Creature added. Total count: " << count << std::endl;
-        return true;
+        std::cout << "Cannot add more creatures. Max limit reached." << std::endl;
+        return false;
     }
-    return false;
+
+    for (int i = 0; i < typeCount; ++i)
+    {
+        if (creatureArr[i].creature->getName() == c->getName())
+        {
+            creatureArr[i].count++;
+            std::cout << "Added another " << c->getName() << ". Total count: " << creatureArr[i].count << std::endl;
+            return true;
+        }
+    }
+
+    // If we reach here, it means it's a new type of creature
+    creatureArr[typeCount].creature = c;
+    creatureArr[typeCount].count = 1;
+    typeCount++;
+    std::cout << "Added new creature: " << c->getName() << ". Total types: " << typeCount << std::endl;
+    return true;
 }
 void Hero::attackAll()
 {
-    if (count == 0)
+    for (int i = 0; i < typeCount; ++i)
     {
-        std::cout << name << " has No creatures to attack with." << std::endl;
-        return;
-    }
-    for (int i = 0; i < count; ++i)
-    {
-        std::cout << name << "'s " << Creatures[i]->getName() << " is attacking!" << std::endl;
-        if (Creatures[i] != nullptr)
+        std::cout << "Attacking with " << creatureArr[i].creature->getName() << " (Count: " << creatureArr[i].count << ")" << std::endl;
+        for (int j = 0; j < creatureArr[i].count; ++j)
         {
-            Creatures[i]->attack();
+            creatureArr[i].creature->attack();
         }
     }
 }
