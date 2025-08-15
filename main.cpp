@@ -1,35 +1,106 @@
 #include <iostream>
-#include "creatures/Knight.h"
-#include "creatures/Priest.h"
+#include <vector>
+#include <string>
 #include "Hero.h"
+#include "Shop.h"
+
+// Example main loop
 int main()
 {
+    std::vector<Hero *> heroes;
+    Shop shop;
+    int gold = 200; // start gold for simplicity
 
-    Hero *hero1 = new Hero("Arthur");
-    Creature *knight1 = new Knight();
-    Creature *knight2 = new Knight();
-    Creature *priest1 = new Priest();
-    hero1->addCreature(knight1);
-    hero1->addCreature(knight2);
-    hero1->addCreature(priest1);
-    for (int i = 0; i < hero1->getTypeCount(); ++i)
+    while (true)
     {
-        if (hero1->getCreatureArr()[i].creature->getName() == "Priest")
+        std::cout << "\n=== Main Menu ===\n";
+        std::cout << "1. Add new hero\n";
+        std::cout << "2. Buy creature for hero\n";
+        std::cout << "3. List heroes\n";
+        std::cout << "4. Attack with all\n";
+        std::cout << "5. Exit\n";
+        std::cout << "Choose an option: ";
+
+        int choice;
+        std::cin >> choice;
+
+        if (choice == 1)
         {
-            hero1->getCreatureArr()[i].creature->heal(); // Call the heal method on Priest
+            std::string heroName;
+            std::cout << "Enter hero name: ";
+            std::cin >> heroName;
+            heroes.push_back(new Hero(heroName));
+            std::cout << "Hero '" << heroName << "' created!\n";
         }
-        else if (hero1->getCreatureArr()[i].creature->getName() == "Knight")
+        else if (choice == 2)
         {
-            Knight *knight = dynamic_cast<Knight *>(hero1->getCreatureArr()[i].creature);
-            if (knight)
+            if (heroes.empty())
             {
-                knight->attack(); // Call the attack method on Knight
+                std::cout << "No heroes available! Create one first.\n";
+                continue;
+            }
+
+            std::cout << "Select a hero:\n";
+            for (size_t i = 0; i < heroes.size(); ++i)
+            {
+                std::cout << i + 1 << ". " << heroes[i]->getName() << "\n";
+            }
+            int heroChoice;
+            std::cin >> heroChoice;
+
+            if (heroChoice < 1 || heroChoice > (int)heroes.size())
+            {
+                std::cout << "Invalid hero selection.\n";
+                continue;
+            }
+
+            shop.buyCreature(*heroes[heroChoice - 1]);
+        }
+        else if (choice == 3)
+        {
+            std::cout << "\n--- Heroes ---\n";
+            for (auto hero : heroes)
+            {
+                hero->getAllCreatures();
             }
         }
-    }
-    std::cout << hero1->getName() << " is ready for battle!" << std::endl;
-    std::cout << "dcdcdc" << std::endl;
+        else if (choice == 4)
+        {
+            if (heroes.empty())
+            {
+                std::cout << "No heroes available! Create one first.\n";
+                continue;
+            }
 
-    hero1->attackAll(); // Calls Knight::attack() for both, even though type is Creature*
-    delete hero1;       // This will also delete knight1 and knight2 due to Hero's destructor
+            std::cout << "Select a hero:\n";
+            for (size_t i = 0; i < heroes.size(); ++i)
+            {
+                std::cout << i + 1 << ". " << heroes[i]->getName() << "\n";
+            }
+            int heroChoice;
+            std::cin >> heroChoice;
+
+            if (heroChoice < 1 || heroChoice > (int)heroes.size())
+            {
+                std::cout << "Invalid hero selection.\n";
+                continue;
+            }
+
+            heroes[heroChoice - 1]->attackAll();
+        }
+
+        else if (choice == 5)
+        {
+            std::cout << "Exiting game.\n";
+            break;
+        }
+    }
+
+    // Cleanup
+    for (auto hero : heroes)
+    {
+        delete hero;
+    }
+
+    return 0;
 }

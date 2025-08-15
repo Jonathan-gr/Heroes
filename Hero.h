@@ -3,28 +3,27 @@
 #include <iostream>
 #include "creatures/Creature.h"
 
-const int MAX_CREATURE_TYPES = 3;
-
-struct CreatureSlot
-{
-    Creature *creature; // pointer to a single creature (the type)
-    int count;          // number of this type
-};
+const int MAX_CREATURE_TYPES = 3; // 0 = Knight, 1 = Priest, 2 = Dragon
 
 class Hero
 {
 private:
+    int goldCoins;
     std::string name;
-    CreatureSlot creatureArr[MAX_CREATURE_TYPES];
-    int typeCount; // how many different types of creatures
+    int creatureCounts[MAX_CREATURE_TYPES] = {0};        // counts for each type
+    Creature *creatures[MAX_CREATURE_TYPES] = {nullptr}; // one slot per type
+    int typeCount;                                       // how many types are currently used
 
 public:
     Hero(const std::string &heroName);
     ~Hero();
 
-    bool addCreature(Creature *c); // add a creature to the hero
-    void attackAll();              // call attack() on all creatures
+    bool addCreature(Creature *c); // add creature to specific index
+    void attackAll();
     std::string getName() const;
-    int getTypeCount() const { return typeCount; }         // get the number of different creature types
-    CreatureSlot *getCreatureArr() { return creatureArr; } // get the array of creatures
+    int getTypeCount() const { return typeCount; }
+    void addGold(int amount) { goldCoins += amount; }
+    int getGold() const { return goldCoins; }
+    void setGold(int amount) { goldCoins = amount; }
+    bool getAllCreatures();
 };

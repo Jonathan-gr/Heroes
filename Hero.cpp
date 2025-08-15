@@ -1,58 +1,89 @@
 #include "Hero.h"
-#include <iostream>
 
-Hero::Hero(const std::string &heroName) : name(heroName), typeCount(0)
+Hero::Hero(const std::string &heroName)
+    : name(heroName), typeCount(0), goldCoins(100)
+{
+    // Arrays already initialized above with {0} and {nullptr}
+}
+
+Hero::~Hero()
 {
     for (int i = 0; i < MAX_CREATURE_TYPES; ++i)
     {
-        creatureArr[i].creature = nullptr;
-        creatureArr[i].count = 0;
+        delete creatures[i];
     }
+    std::cout << "Hero '" << name << "' destroyed.\n";
 }
-Hero::~Hero()
-{
-    for (int i = 0; i < typeCount; ++i)
-    {
-        std::cout << "Deleting creature of type: " << creatureArr[i].creature->getName() << std::endl;
-        delete creatureArr[i].creature;
-    }
-    std::cout << name << " destroyed." << std::endl;
-}
+
 bool Hero::addCreature(Creature *c)
 {
-    if (typeCount >= MAX_CREATURE_TYPES)
+    if (c == nullptr)
+        return false;
+    int typeIndex = -1;
+    if (c->getName() == "Knight")
+        typeIndex = 0; // Knight
+    else if (c->getName() == "Priest")
+        typeIndex = 1; // Priest
+    else if (c->getName() == "Dragon")
+        typeIndex = 2; // Dragon
+
+    if (typeIndex < 0)
     {
-        std::cout << "Cannot add more creatures. Max limit reached." << std::endl;
+        std::cerr << "Invalid creature type: " << c->getName() << std::endl;
         return false;
     }
-
-    for (int i = 0; i < typeCount; ++i)
+    std::cout << "Adding creature of type: " << c->getName() << std::endl;
+    if (creatures[typeIndex] == nullptr)
     {
-        if (creatureArr[i].creature->getName() == c->getName())
-        {
-            creatureArr[i].count++;
-            std::cout << "Added another " << c->getName() << ". Total count: " << creatureArr[i].count << std::endl;
-            return true;
-        }
+        creatures[typeIndex] = c;
+        typeCount++;
     }
-
-    // If we reach here, it means it's a new type of creature
-    creatureArr[typeCount].creature = c;
-    creatureArr[typeCount].count = 1;
-    typeCount++;
-    std::cout << "Added new creature: " << c->getName() << ". Total types: " << typeCount << std::endl;
+    creatureCounts[typeIndex]++;
+    std::cout << "Added creature at index " << typeIndex
+              << ". Total of this type: " << creatureCounts[typeIndex] << "\n";
     return true;
 }
+
 void Hero::attackAll()
 {
-    for (int i = 0; i < typeCount; ++i)
+    for (int i = 0; i < MAX_CREATURE_TYPES; ++i)
     {
-        std::cout << "Attacking with " << creatureArr[i].creature->getName() << " (Count: " << creatureArr[i].count << ")" << std::endl;
-        for (int j = 0; j < creatureArr[i].count; ++j)
+        if (creatures[i] != nullptr && creatureCounts[i] > 0)
         {
-            creatureArr[i].creature->attack();
+            int totalAttack = creatures[i]->getAttackPower() * creatureCounts[i];
+
+            std::string creatureName = creatures[i]->getName();
+            std::string attackName = "attack";
+            if (creatureCounts[i] > 1)
+            {
+                creatureName += "s";
+            }
+            else
+            {
+                attackName = "attacks";
+            }
+
+            std::cout << name << "'s " << creatureCounts[i] << " " << creatureName
+                      << " " << attackName << " with total power: " << totalAttack << "\n";
         }
     }
+}
+bool Hero::getAllCreatures()
+{
+    if (typeCount == 0)
+    {
+        std::cout << "No creatures available.\n";
+        return false;
+    }
+    std::cout << "Hero " << name << " has the following creatures:\n";
+    for (int i = 0; i < MAX_CREATURE_TYPES; ++i)
+    {
+        if (creatures[i] != nullptr)
+        {
+            std::cout << "- " << creatures[i]->getName() << " (Count: " << creatureCounts[i] << ")\n";
+        }
+    }
+    return true;
 }
 std::string Hero::getName() const
 {
